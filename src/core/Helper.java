@@ -36,7 +36,7 @@ public class Helper {
     }
 
     public static boolean isEmailValid(String mail)
-    {
+    {optionPaneDialogTR();
         if (mail==null|mail.trim().isEmpty()) return false;
         if (!mail.contains("@")) return false;
         String[] parts=mail.split("@");
@@ -45,6 +45,49 @@ public class Helper {
         if (!parts [1].contains(".")) return false;
 
         return true;
+    }
+public static void optionPaneDialogTR(){
+        UIManager.put("OptionPane.okButtonText","TAMAM");
+}
+    public static void showMsg(String message){
+        String msg;
+        String title;
+        optionPaneDialogTR();
+        switch (message)
+        {
+            case "fill"->
+            {
+                msg="TÜM ALANLARI DOLDURUN!";
+                title="HATA";
+
+            }
+            case "mail"->
+            {
+                msg="mail ALANLARI DOLDURUN!";
+                title="hata";
+
+            }
+            case "done"->
+            {
+                msg="İŞLEMLER BAŞARILI!";
+                title="SONUÇ";
+
+            }
+            case "error"->
+            {
+                msg="BİR HATA OLUŞTU!";
+                title="HATA";
+
+            }
+            default->
+            {
+               msg= message;
+                title="mesaj";
+
+            }
+        }
+        JOptionPane.showMessageDialog(null,msg,title,JOptionPane.INFORMATION_MESSAGE);
+
     }
 
 }

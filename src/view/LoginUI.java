@@ -1,6 +1,8 @@
 package view;
 
 import core.Helper;
+import entity.User;
+import business.UserController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +11,7 @@ import java.awt.event.ActionListener;
 
 public class LoginUI extends JFrame
 {
+    private final Object userController;
     private JPanel contanier;
     private JPanel pnl;
     private JLabel lbl_top;
@@ -20,7 +23,7 @@ public class LoginUI extends JFrame
     private JTextField fld_mail;
 
     public  LoginUI()
-    {
+    { this.userController=new UserController();
         this.add(contanier);
         this.setTitle("Müşteri Yönetim Sistemi");
         this.setSize(400,400);
@@ -39,18 +42,23 @@ public class LoginUI extends JFrame
            if (!Helper.isEmailValid(this.fld_mail.getText()))
            {
                // hata mesajı ıcın
-               JOptionPane.showMessageDialog(null,"EPOSTA GECERSIZ","HATAA",JOptionPane.INFORMATION_MESSAGE);
-           }
+         Helper.showMsg("mail"); }
             if (Helper.isFieldListEmpty(chechList))
             {
-                System.out.println("lütfen alanı doldur");
+               Helper.showMsg("fill");
 
             }
+
             else
             {
-                System.out.println("giriş yapın");
+                User user= ((UserController) this.userController).findByLogin(this.fld_mail.getText(),this.fld_password.getText());
+          if (user==null) {
+              Helper.showMsg("GİRDİĞİNİZ BİLGİLER BULUNAMADU");
+          }
+          else {
+              System.out.println(user.toString());;
+          }
             }
-
 
 
         });
