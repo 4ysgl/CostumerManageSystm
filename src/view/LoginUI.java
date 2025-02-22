@@ -23,7 +23,8 @@ public class LoginUI extends JFrame
     private JTextField fld_mail;
 
     public  LoginUI()
-    { this.userController=new UserController();
+    {
+        this.userController=new UserController();
         this.add(contanier);
         this.setTitle("Müşteri Yönetim Sistemi");
         this.setSize(400,400);
@@ -56,7 +57,8 @@ public class LoginUI extends JFrame
               Helper.showMsg("GİRDİĞİNİZ BİLGİLER BULUNAMADU");
           }
           else {
-              System.out.println(user.toString());;
+         this.dispose(); // eğer işlemler dogru ılerledıyse DashboardUI Formunu acacak.
+              DashboardUI dashboardUI=new DashboardUI(user);
           }
             }
 
