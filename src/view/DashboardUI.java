@@ -1,10 +1,18 @@
 package view;
 
+import business.CustomerController;
 import core.Helper;
+import entity.Customer;
 import entity.User;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class DashboardUI extends JFrame
 {
@@ -16,7 +24,7 @@ public class DashboardUI extends JFrame
     private JTabbedPane tab_menu;
     private JPanel pnl_customer;
     private JScrollPane scrl_customer;
-    private JTable table1;
+    private JTable tblCustomer;
     private JPanel pnl_customerfilter;
     private JTextField f_customerName;
     private JButton btn_customerFilter;
@@ -25,12 +33,15 @@ public class DashboardUI extends JFrame
     private JComboBox cmb_customerType;
     private JLabel lbl_fcustomerName;
     private JLabel lbl_fcustomerType;
-
+    private   CustomerController customerController;
+    private DefaultTableModel tmdl_customer = new DefaultTableModel();
+ private JPopupMenu popupCustomer=new JPopupMenu();
 
     public DashboardUI(User user)
     {
 
         this.user = user;
+        this.customerController=new CustomerController();
         if (user==null)
         {
             Helper.showMsg("error");
@@ -53,5 +64,60 @@ public class DashboardUI extends JFrame
 
 
         });
+      loadCustomerTable(null);
+      loadCustomerPopupMenu();
+
+    }
+private void loadCustomerPopupMenu()
+{
+    this.tblCustomer.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+           int selectedRow=tblCustomer.rowAtPoint(e.getPoint());
+           tblCustomer.setRowSelectionInterval(selectedRow,selectedRow);
+        }
+    });
+    this.popupCustomer.add("Güncelle").addActionListener(e ->
+    {
+        int selectedId=Integer.parseInt((tblCustomer.getValueAt(tblCustomer.getSelectedRow(),0).toString()));
+        System.out.println(selectedId);
+    });
+    this.popupCustomer.add("Sil").addActionListener(e ->{
+        System.out.println("silmeye tıklandı");
+
+    });
+    this.tblCustomer.setComponentPopupMenu(this.popupCustomer);
+}
+    private  void  loadCustomerTable(ArrayList<Customer> customers)
+    {
+        Object[] columCustomer= {"ID","Müşteri Adı","Tipi","Telefon","E-Posta","Adres"};
+ if (customers==null)
+ {
+     customers=this.customerController.findAll();
+ }
+// tabloyu sıfırlama / tablo cagırıldıgında asagıya dogru tekrar etmemesı ıcın
+        DefaultTableModel clearModel= (DefaultTableModel)this.tblCustomer.getModel();
+        clearModel.setRowCount(0);
+        this.tmdl_customer.setColumnIdentifiers(columCustomer);
+
+        for (Customer customer:customers)
+        {
+            Object[] rowObject=
+                    {
+                            customer.getId(),
+                            customer.getName(),
+                            customer.getType(),
+                            customer.getPhone(),
+                            customer.getMail(),
+                            customer.getAddress()
+
+                    };
+            this.tmdl_customer.addRow(rowObject);
+        }
+        this.tblCustomer.setModel(tmdl_customer);
+        this.tblCustomer.getTableHeader().setReorderingAllowed(false);
+        this.tblCustomer.getColumnModel().getColumn(0).setMaxWidth(50);
+        this.tblCustomer.setEnabled(false);
+
     }
 }
