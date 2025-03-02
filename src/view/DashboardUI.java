@@ -14,10 +14,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class DashboardUI extends JFrame
-{
+public class DashboardUI extends JFrame {
 
-    private  User user;
+    private User user;
     private JPanel container;
     private JLabel lbl_welcome;
     private JButton btn_logout;
@@ -33,76 +32,82 @@ public class DashboardUI extends JFrame
     private JComboBox cmb_customerType;
     private JLabel lbl_fcustomerName;
     private JLabel lbl_fcustomerType;
-    private   CustomerController customerController;
+    private CustomerController customerController;
     private DefaultTableModel tmdl_customer = new DefaultTableModel();
- private JPopupMenu popupCustomer=new JPopupMenu();
+    private JPopupMenu popupCustomer = new JPopupMenu();
 
-    public DashboardUI(User user)
-    {
+    public DashboardUI(User user) {
 
         this.user = user;
-        this.customerController=new CustomerController();
-        if (user==null)
-        {
+        this.customerController = new CustomerController();
+        if (user == null) {
             Helper.showMsg("error");
             dispose();
         }
         this.add(container);
         this.setTitle("Müşteri Yönetim Sistemi");
-        this.setSize(1000,500);
-        int x=(Toolkit.getDefaultToolkit().getScreenSize().width -this.getSize().width)/2;
-        int y=(Toolkit.getDefaultToolkit().getScreenSize().height -this.getSize().height)/2;
-        this.setLocation(x,y);
+        this.setSize(1000, 500);
+        int x = (Toolkit.getDefaultToolkit().getScreenSize().width - this.getSize().width) / 2;
+        int y = (Toolkit.getDefaultToolkit().getScreenSize().height - this.getSize().height) / 2;
+        this.setLocation(x, y);
         this.setVisible(true);
-        this.lbl_welcome.setText("Hoşgeldin :" +this.user.getName());
+        this.lbl_welcome.setText("Hoşgeldin :" + this.user.getName());
 
 
         this.btn_logout.addActionListener(e -> //Logout botton
         {
-             dispose();
-             LoginUI loginUI=new LoginUI();
+            dispose();
+            LoginUI loginUI = new LoginUI();
 
 
         });
-      loadCustomerTable(null);
-      loadCustomerPopupMenu();
-
+        loadCustomerTable(null);
+        loadCustomerPopupMenu();
+        loadCustomerButtonEvent();
     }
-private void loadCustomerPopupMenu()
-{
-    this.tblCustomer.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mousePressed(MouseEvent e) {
-           int selectedRow=tblCustomer.rowAtPoint(e.getPoint());
-           tblCustomer.setRowSelectionInterval(selectedRow,selectedRow);
-        }
-    });
-    this.popupCustomer.add("Güncelle").addActionListener(e ->
-    {
-        int selectedId=Integer.parseInt((tblCustomer.getValueAt(tblCustomer.getSelectedRow(),0).toString()));
-        System.out.println(selectedId);
-    });
-    this.popupCustomer.add("Sil").addActionListener(e ->{
-        System.out.println("silmeye tıklandı");
 
-    });
-    this.tblCustomer.setComponentPopupMenu(this.popupCustomer);
-}
-    private  void  loadCustomerTable(ArrayList<Customer> customers)
+    private void loadCustomerButtonEvent()
     {
-        Object[] columCustomer= {"ID","Müşteri Adı","Tipi","Telefon","E-Posta","Adres"};
- if (customers==null)
- {
-     customers=this.customerController.findAll();
- }
+this.btn_customerAdd.addActionListener(e ->{
+CustomerUI customerUI=new CustomerUI(new Customer());
+
+});
+    };
+
+
+
+    private void loadCustomerPopupMenu() {
+        this.tblCustomer.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int selectedRow = tblCustomer.rowAtPoint(e.getPoint());
+                tblCustomer.setRowSelectionInterval(selectedRow, selectedRow);
+            }
+        });
+        this.popupCustomer.add("Güncelle").addActionListener(e ->
+        {
+            int selectedId = Integer.parseInt((tblCustomer.getValueAt(tblCustomer.getSelectedRow(), 0).toString()));
+            System.out.println(selectedId);
+        });
+        this.popupCustomer.add("Sil").addActionListener(e -> {
+            System.out.println("silmeye tıklandı");
+
+        });
+        this.tblCustomer.setComponentPopupMenu(this.popupCustomer);
+    }
+
+    private void loadCustomerTable(ArrayList<Customer> customers) {
+        Object[] columCustomer = {"ID", "Müşteri Adı", "Tipi", "Telefon", "E-Posta", "Adres"};
+        if (customers == null) {
+            customers = this.customerController.findAll();
+        }
 // tabloyu sıfırlama / tablo cagırıldıgında asagıya dogru tekrar etmemesı ıcın
-        DefaultTableModel clearModel= (DefaultTableModel)this.tblCustomer.getModel();
+        DefaultTableModel clearModel = (DefaultTableModel) this.tblCustomer.getModel();
         clearModel.setRowCount(0);
         this.tmdl_customer.setColumnIdentifiers(columCustomer);
 
-        for (Customer customer:customers)
-        {
-            Object[] rowObject=
+        for (Customer customer : customers) {
+            Object[] rowObject =
                     {
                             customer.getId(),
                             customer.getName(),
