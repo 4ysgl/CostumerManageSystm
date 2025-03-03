@@ -34,14 +34,13 @@ public class CustomerDao {
     {
     String query="INSERT INTO customer "+
             "(" +
-
-            "name"+
+            "name,"+
             "type,"+
-        "phone,"+
+            "phone,"+
             "mail,"+
             "address"+
-           ")" +
-           "VALUES (?,?,?,?,?)" ;
+            ")" +
+            "VALUES (?,?,?,?,?)" ;
         try {
             PreparedStatement pr=this.connection.prepareStatement(query);
            pr.setString(1,customer.getName());
@@ -55,6 +54,7 @@ public class CustomerDao {
         }
 
     }
+    
     public  Customer match(ResultSet rs) throws SQLException
     {
        Customer  customer=new Customer();
