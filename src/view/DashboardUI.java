@@ -22,7 +22,7 @@ public class DashboardUI extends JFrame {
     private JScrollPane scrl_customer;
     private JTable tblCustomer;
     private JPanel pnl_customerfilter;
-    private JTextField f_customerName;
+    private JTextField fld_customerName;
     private JButton btn_customerFilter;
     private JButton btn_customerReset;
     private JButton btn_customerAdd;
@@ -58,9 +58,16 @@ public class DashboardUI extends JFrame {
 
 
         });
+
+        //CUSTOMER TAB
         loadCustomerTable(null);
         loadCustomerPopupMenu();
         loadCustomerButtonEvent();
+        this.cmb_customerType.setModel(new DefaultComboBoxModel<>(Customer.TYPE.values()));
+        this.cmb_customerType.setSelectedItem(null);
+
+
+
     }
 
 
@@ -74,6 +81,20 @@ public class DashboardUI extends JFrame {
                 }
             });
 
+        });
+        this.btn_customerFilter.addActionListener(e -> {
+
+            ArrayList<Customer> filteredCustomers = this.customerController.filter(
+                    this.fld_customerName.getText(),
+                    (Customer.TYPE) this.cmb_customerType.getSelectedItem()
+            );
+            loadCustomerTable(filteredCustomers);
+        });
+        this.btn_customerReset.addActionListener(e -> {
+
+loadCustomerTable(null);
+this.fld_customerName.setText(null);
+this.cmb_customerType.setSelectedItem(null);
         });
     }
 

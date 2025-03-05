@@ -16,8 +16,7 @@ public class CustomerController {
         return this.customerDao.findAll();
     }
 
-    public boolean save(Customer customer)
-    {
+    public boolean save(Customer customer) {
         return this.customerDao.save(customer);
     }
 
@@ -33,13 +32,35 @@ public class CustomerController {
         }
         return this.customerDao.update(customer);
     }
-    public boolean delete(int id)
-    {
-        if (this.getById(id)==null)
-        {
-            Helper.showMsg(id+"ID KAYITLI MÜŞTERİ BULUNAMADI");
+
+    public boolean delete(int id) {
+        if (this.getById(id) == null) {
+            Helper.showMsg(id + "ID KAYITLI MÜŞTERİ BULUNAMADI");
             return false;
         }
         return this.customerDao.delete(id);
+    }
+
+
+    public ArrayList<Customer> filter(String name,Customer.TYPE type)
+    {
+        //SELECT*FROM customer WHERE name LIKE '%TEST%' AND type='PERSON'
+        //SELECT*FROM customer WHERE name LİKE '%TEST%'
+        //SELECT*FROM customer WHERE type='PERSON'
+        //SELECT*FROM customer
+
+        String query = "SELECT * FROM customer";
+        ArrayList<String> whereList = new ArrayList<>();
+        if (name.length() > 0) {
+            whereList.add("name LIKE '%" + name + "%'");
+        }
+        if (type != null) {
+            whereList.add("type='" + type + "'");
+        }
+        if (whereList.size() > 0) {
+            String whereQuery = String.join(" AND ", whereList);
+            query += " WHERE " + whereQuery;
+        }
+        return this.customerDao.query(query);
     }
 }
