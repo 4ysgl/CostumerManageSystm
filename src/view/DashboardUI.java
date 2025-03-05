@@ -8,10 +8,7 @@ import entity.User;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class DashboardUI extends JFrame {
@@ -66,14 +63,21 @@ public class DashboardUI extends JFrame {
         loadCustomerButtonEvent();
     }
 
-    private void loadCustomerButtonEvent()
-    {
-this.btn_customerAdd.addActionListener(e ->{
-CustomerUI customerUI=new CustomerUI(new Customer());
 
-});
-    };
 
+    private void loadCustomerButtonEvent() {
+        this.btn_customerAdd.addActionListener(e -> {
+            CustomerUI customerUI = new CustomerUI(new Customer());
+            customerUI.addWindowListener(new WindowAdapter() {
+                public void windowClosed(WindowEvent e) {
+                    loadCustomerTable(null);
+                }
+            });
+
+        });
+    }
+
+    ;
 
 
     private void loadCustomerPopupMenu() {
@@ -82,12 +86,19 @@ CustomerUI customerUI=new CustomerUI(new Customer());
             public void mousePressed(MouseEvent e) {
                 int selectedRow = tblCustomer.rowAtPoint(e.getPoint());
                 tblCustomer.setRowSelectionInterval(selectedRow, selectedRow);
+
             }
         });
         this.popupCustomer.add("Güncelle").addActionListener(e ->
         {
             int selectedId = Integer.parseInt((tblCustomer.getValueAt(tblCustomer.getSelectedRow(), 0).toString()));
-            System.out.println(selectedId);
+            CustomerUI customerUI = new CustomerUI(this.customerController.getById(selectedId));
+            customerUI.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadCustomerTable(null);
+                }
+            });
         });
         this.popupCustomer.add("Sil").addActionListener(e -> {
             System.out.println("silmeye tıklandı");
@@ -96,8 +107,12 @@ CustomerUI customerUI=new CustomerUI(new Customer());
         this.tblCustomer.setComponentPopupMenu(this.popupCustomer);
     }
 
+
+
+
+
     private void loadCustomerTable(ArrayList<Customer> customers) {
-        Object[] columCustomer = {"ID", "Müşteri Adı", "Tipi", "Telefon", "E-Posta", "Adres"};
+        Object[] columCustomer = {"ID", "Müsteri Adı", "Tipi", "Telefon", "E-Posta", "Adres"};
         if (customers == null) {
             customers = this.customerController.findAll();
         }

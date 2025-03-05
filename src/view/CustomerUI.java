@@ -20,7 +20,7 @@ public class CustomerUI extends JFrame {
     private JButton btnSave;
     private JLabel lblTitle;
     private Customer customer;
-    private CustomerController  customerController;
+    private CustomerController customerController;
 
 
     public CustomerUI(Customer customer) {
@@ -53,7 +53,7 @@ public class CustomerUI extends JFrame {
             JTextField[] checkList = {this.fldCName, this.fldCPhone};
             if (Helper.isFieldListEmpty(checkList)) {
                 Helper.showMsg("fill");
-            } else if (!this.fldCMail.getText().trim().isEmpty() && !Helper.isEmailValid(this.fldCMail.getText())) {
+            } else if (!this.fldCMail.getText().isEmpty() && !Helper.isEmailValid(this.fldCMail.getText())) {
                 Helper.showMsg("lÜTFEN GEÇERLİ EPOSTA GİRİN");
             } else {
                 boolean result = false;
@@ -66,6 +66,8 @@ public class CustomerUI extends JFrame {
                 if (this.customer.getId() == 0) {
                     result = this.customerController.save(this.customer);
 
+                }else {
+                    result =this.customerController.update(this.customer);
                 }
                 if (result) {
                     Helper.showMsg("done");
