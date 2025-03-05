@@ -48,6 +48,8 @@ public class Helper {
     }
 public static void optionPaneDialogTR(){
         UIManager.put("OptionPane.okButtonText","TAMAM");
+        UIManager.put("OptionPane.yesButtonText","Evet");
+    UIManager.put("OptionPane.noButtonText","Hayır");
 }
     public static void showMsg(String message){
         String msg;
@@ -88,6 +90,20 @@ public static void optionPaneDialogTR(){
         }
         JOptionPane.showMessageDialog(null,msg,title,JOptionPane.INFORMATION_MESSAGE);
 
+    }
+    public static boolean confirm(String str)
+    {
+        optionPaneDialogTR();
+        String msg;
+        if (str.equals("sure"))
+        {
+            msg="Bu işlemi gerceklestırmek istediğinizden emin misiniz?";
+
+        }
+        else {
+            msg=str;
+        }
+        return JOptionPane.showConfirmDialog(null,msg,"Emin misin",JOptionPane.YES_NO_OPTION)==0 ;
     }
 
 }

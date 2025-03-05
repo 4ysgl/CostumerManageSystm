@@ -99,6 +99,22 @@ String query="SELECT * FROM customer WHERE id=?";
 return true;
 
     }
+    public boolean delete(int id)
+    {String query="DELETE FROM customer WHERE id =?";
+        try {
+            PreparedStatement pr=this.connection.prepareStatement(query);
+            pr.setInt(1,id);
+            return pr.executeUpdate()!=-1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+
+
+
+
     public  Customer match(ResultSet rs) throws SQLException
     {
        Customer  customer=new Customer();
@@ -111,4 +127,9 @@ return true;
         customer.setAddress(rs.getString("address"));
 
         return customer;
-    }}
+    }
+
+
+
+
+}
