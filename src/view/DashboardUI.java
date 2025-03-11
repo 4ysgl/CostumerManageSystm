@@ -1,8 +1,10 @@
 package view;
 
 import business.CustomerController;
+import business.ProductController;
 import core.Helper;
 import entity.Customer;
+import entity.Product;
 import entity.User;
 
 import javax.swing.*;
@@ -29,14 +31,30 @@ public class DashboardUI extends JFrame {
     private JComboBox cmb_customerType;
     private JLabel lbl_fcustomerName;
     private JLabel lbl_fcustomerType;
+    private JPanel pnl_Product;
+    private JTable tbl_product;
+    private JPanel pnl_productFilter;
+    private JTextField fldUrunName;
+    private JTextField fdlPCode;
+    private JComboBox cmbPCode;
+    private JButton btnUSearch;
+    private JButton btnUDelete;
+    private JButton btnUAdd;
+    private JLabel lblUCode;
+    private JLabel lblPStok;
     private CustomerController customerController;
+    private ProductController productController;
     private DefaultTableModel tmdl_customer = new DefaultTableModel();
+    private DefaultTableModel tmdl_product = new DefaultTableModel();
+    private JPopupMenu popupProduct= new JPopupMenu();
+
     private JPopupMenu popupCustomer = new JPopupMenu();
 
     public DashboardUI(User user) {
 
         this.user = user;
         this.customerController = new CustomerController();
+     this.productController=new ProductController();
         if (user == null) {
             Helper.showMsg("error");
             dispose();
@@ -66,9 +84,61 @@ public class DashboardUI extends JFrame {
         this.cmb_customerType.setModel(new DefaultComboBoxModel<>(Customer.TYPE.values()));
         this.cmb_customerType.setSelectedItem(null);
 
+//PRODUCT TABLE
+loadProductTable(null);
+loadProductPopupMenu();
+    }
+
+
+
+// product table
+    private void loadProductPopupMenu()
+    {
+
+        this.tbl_product.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int selectedRow = tbl_product.rowAtPoint(e.getPoint());
+                tbl_product.setRowSelectionInterval(selectedRow, selectedRow);
+
+            }
+        });
+        this.popupProduct.add("Güncelle");
+
+        this.popupProduct.add("Sil");
+        this.tbl_product.setComponentPopupMenu(this.popupProduct);
 
 
     }
+private void loadProductTable(ArrayList<Product> products) {
+    Object[] columnProduct = {"ID", "Ürün Adı", "Ürün Kodu", "Ürün Fiyatı", "Ürün Stok"};
+    if (products == null) {
+        products = this.productController.findAll();
+    }
+// tabloyu sıfırlama / tablo cagırıldıgında asagıya dogru tekrar etmemesı ıcın
+    DefaultTableModel clearModel = (DefaultTableModel) this.tbl_product.getModel();
+    clearModel.setRowCount(0);
+
+    this.tmdl_product.setColumnIdentifiers(columnProduct);
+
+    for (Product  product : products) {
+        Object[] rowObject =
+                {
+                        product.getId(),
+                        product.getName(),
+                        product.getCode(),
+                        product.getPrice(),
+                        product.getStock()
+
+                };
+        this.tmdl_product.addRow(rowObject);
+    }
+    this.tbl_product.setModel(tmdl_product);
+    this.tbl_product.getTableHeader().setReorderingAllowed(false);
+    this.tbl_product.getColumnModel().getColumn(0).setMaxWidth(50);
+    this.tbl_product.setEnabled(false);
+
+}
 
 
 
