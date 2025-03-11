@@ -46,7 +46,7 @@ public class DashboardUI extends JFrame {
     private ProductController productController;
     private DefaultTableModel tmdl_customer = new DefaultTableModel();
     private DefaultTableModel tmdl_product = new DefaultTableModel();
-    private JPopupMenu popupProduct= new JPopupMenu();
+    private JPopupMenu popupProduct = new JPopupMenu();
 
     private JPopupMenu popupCustomer = new JPopupMenu();
 
@@ -54,7 +54,7 @@ public class DashboardUI extends JFrame {
 
         this.user = user;
         this.customerController = new CustomerController();
-     this.productController=new ProductController();
+        this.productController = new ProductController();
         if (user == null) {
             Helper.showMsg("error");
             dispose();
@@ -85,15 +85,28 @@ public class DashboardUI extends JFrame {
         this.cmb_customerType.setSelectedItem(null);
 
 //PRODUCT TABLE
-loadProductTable(null);
-loadProductPopupMenu();
+        loadProductTable(null);
+        loadProductPopupMenu();
+        loadProductButtonEvent();
+
+
     }
 
+    private void loadProductButtonEvent() {
+        this.btnUAdd.addActionListener(e -> {
+            ProductUI productUI = new ProductUI(new Product());
+            productUI.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadProductTable(null);
+                }
+            });
 
+        });
+    }
 
-// product table
-    private void loadProductPopupMenu()
-    {
+    // product table
+    private void loadProductPopupMenu() {
 
         this.tbl_product.addMouseListener(new MouseAdapter() {
             @Override
@@ -103,43 +116,65 @@ loadProductPopupMenu();
 
             }
         });
-        this.popupProduct.add("Güncelle");
+        this.popupProduct.add("Güncelle").addActionListener(e ->
+        {
+            int selectedId = Integer.parseInt((this.tbl_product.getValueAt(this.tbl_product.getSelectedRow(), 0).toString()));
+            ProductUI productUI = new ProductUI(this.productController.getById(selectedId));
+            productUI.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadProductTable(null);
+                }
+            });
+        });
 
-        this.popupProduct.add("Sil");
+        this.popupProduct.add("Sil").addActionListener(e ->
+        {
+            int selectedId = Integer.parseInt((tbl_product.getValueAt(tbl_product.getSelectedRow(), 0).toString()));
+            if (Helper.confirm("sure")) {
+                if (this.productController.delete(selectedId)) {
+                    Helper.showMsg("done");
+                    loadProductTable(null);
+                } else {
+                    Helper.showMsg("error");
+
+                }
+            }
+        });
         this.tbl_product.setComponentPopupMenu(this.popupProduct);
 
 
     }
-private void loadProductTable(ArrayList<Product> products) {
-    Object[] columnProduct = {"ID", "Ürün Adı", "Ürün Kodu", "Ürün Fiyatı", "Ürün Stok"};
-    if (products == null) {
-        products = this.productController.findAll();
-    }
+
+    private void loadProductTable(ArrayList<Product> products) {
+        Object[] columnProduct = {"ID", "Ürün Adı", "Ürün Kodu", "Ürün Fiyatı", "Ürün Stok"};
+        if (products == null) {
+            products = this.productController.findAll();
+        }
 // tabloyu sıfırlama / tablo cagırıldıgında asagıya dogru tekrar etmemesı ıcın
-    DefaultTableModel clearModel = (DefaultTableModel) this.tbl_product.getModel();
-    clearModel.setRowCount(0);
+        DefaultTableModel clearModel = (DefaultTableModel) this.tbl_product.getModel();
+        clearModel.setRowCount(0);
 
-    this.tmdl_product.setColumnIdentifiers(columnProduct);
+        this.tmdl_product.setColumnIdentifiers(columnProduct);
 
-    for (Product  product : products) {
-        Object[] rowObject =
-                {
-                        product.getId(),
-                        product.getName(),
-                        product.getCode(),
-                        product.getPrice(),
-                        product.getStock()
+        for (Product product : products) {
+            Object[] rowObject =
+                    {
+                            product.getId(),
+                            product.getName(),
+                            product.getCode(),
+                            product.getPrice(),
+                            product.getStock()
 
-                };
-        this.tmdl_product.addRow(rowObject);
+                    };
+            this.tmdl_product.addRow(rowObject);
+        }
+        this.tbl_product.setModel(tmdl_product);
+        this.tbl_product.getTableHeader().setReorderingAllowed(false);
+        this.tbl_product.getColumnModel().getColumn(0).setMaxWidth(50);
+        this.tbl_product.setEnabled(false);
+
     }
-    this.tbl_product.setModel(tmdl_product);
-    this.tbl_product.getTableHeader().setReorderingAllowed(false);
-    this.tbl_product.getColumnModel().getColumn(0).setMaxWidth(50);
-    this.tbl_product.setEnabled(false);
-
-}
-
 
 
     private void loadCustomerButtonEvent() {
@@ -162,9 +197,9 @@ private void loadProductTable(ArrayList<Product> products) {
         });
         this.btn_customerReset.addActionListener(e -> {
 
-loadCustomerTable(null);
-this.fld_customerName.setText(null);
-this.cmb_customerType.setSelectedItem(null);
+            loadCustomerTable(null);
+            this.fld_customerName.setText(null);
+            this.cmb_customerType.setSelectedItem(null);
         });
     }
 
@@ -193,22 +228,18 @@ this.cmb_customerType.setSelectedItem(null);
         });
         this.popupCustomer.add("Sil").addActionListener(e -> {
             int selectedId = Integer.parseInt((tblCustomer.getValueAt(tblCustomer.getSelectedRow(), 0).toString()));
-           if (Helper.confirm("sure"))
-           {
-               if (this.customerController.delete(selectedId)) {
-                   Helper.showMsg("done");
-                   loadCustomerTable(null);
-               } else {
-                   Helper.showMsg("error");
+            if (Helper.confirm("sure")) {
+                if (this.customerController.delete(selectedId)) {
+                    Helper.showMsg("done");
+                    loadCustomerTable(null);
+                } else {
+                    Helper.showMsg("error");
 
-               }
-           }
+                }
+            }
         });
         this.tblCustomer.setComponentPopupMenu(this.popupCustomer);
     }
-
-
-
 
 
     private void loadCustomerTable(ArrayList<Customer> customers) {
