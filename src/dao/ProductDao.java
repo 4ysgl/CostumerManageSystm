@@ -96,7 +96,19 @@ public class ProductDao {
         }
         return true;
     }
+    public ArrayList<Product> query(String query) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+            ResultSet rs = this.connection.createStatement().executeQuery(query);
+            while (rs.next()) {
+                products.add(this.match(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
 
+    }
     public boolean update(Product product) {
         String query = "UPDATE product SET " +
                 "name = ?," +

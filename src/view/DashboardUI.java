@@ -3,6 +3,7 @@ package view;
 import business.CustomerController;
 import business.ProductController;
 import core.Helper;
+import core.Item;
 import entity.Customer;
 import entity.Product;
 import entity.User;
@@ -36,8 +37,8 @@ public class DashboardUI extends JFrame {
     private JPanel pnl_productFilter;
     private JTextField fldUrunName;
     private JTextField fdlPCode;
-    private JComboBox cmbPCode;
-    private JButton btnUSearch;
+    private JComboBox cmbPStock;
+    private JButton btnPSearch;
     private JButton btnUDelete;
     private JButton btnUAdd;
     private JLabel lblUCode;
@@ -88,6 +89,10 @@ public class DashboardUI extends JFrame {
         loadProductTable(null);
         loadProductPopupMenu();
         loadProductButtonEvent();
+        this.cmbPStock.addItem(new Item(1,"Stokta Var"));
+        this.cmbPStock.addItem(new Item(2,"Stokta Yok "));
+        this.cmbPStock.setSelectedItem(null);
+
 
 
     }
@@ -103,6 +108,24 @@ public class DashboardUI extends JFrame {
             });
 
         });
+        this.btnPSearch.addActionListener(e -> {
+            ArrayList<Product> filteredProduct = this.productController.filter(
+                    this.fldUrunName.getText(),
+                    this.fdlPCode.getText(),
+                    (Item) this.cmbPStock.getSelectedItem()
+            );
+            loadProductTable(filteredProduct); // Tablonun güncellenmesi için eklenmeli
+        });
+
+        this.btnUDelete.addActionListener(e -> {
+            this.fldUrunName.setText(null);
+            this.fdlPCode.setText(null);
+            this.cmbPStock.setSelectedItem(null);
+            loadProductTable(null);
+
+        });
+
+
     }
 
     // product table
