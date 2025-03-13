@@ -48,7 +48,7 @@ public class DashboardUI extends JFrame {
     private JPanel pnlBasket;
     private JButton btnBasketReset;
     private JButton btnBasketNew;
-    private JComboBox <Item>cmbBasketCustomer;
+    private JComboBox<Item> cmbBasketCustomer;
     private JTable tblBasket;
     private JLabel lblBasketPrice;
     private JLabel lblBasketCount;
@@ -57,7 +57,7 @@ public class DashboardUI extends JFrame {
     private ProductController productController;
     private DefaultTableModel tmdl_customer = new DefaultTableModel();
     private DefaultTableModel tmdl_product = new DefaultTableModel();
-    private DefaultTableModel tmbl_basket=new DefaultTableModel();
+    private DefaultTableModel tmbl_basket = new DefaultTableModel();
     private JPopupMenu popupProduct = new JPopupMenu();
 
     private JPopupMenu popupCustomer = new JPopupMenu();
@@ -67,7 +67,7 @@ public class DashboardUI extends JFrame {
         this.user = user;
         this.customerController = new CustomerController();
         this.productController = new ProductController();
-        this.basketController=new BasketController();
+        this.basketController = new BasketController();
         if (user == null) {
             Helper.showMsg("error");
             dispose();
@@ -97,7 +97,7 @@ public class DashboardUI extends JFrame {
         this.cmb_customerType.setModel(new DefaultComboBoxModel<>(Customer.TYPE.values()));
         this.cmb_customerType.setSelectedItem(null);
 
-         //PRODUCT TABLE
+        //PRODUCT TABLE
         loadProductTable(null);
         loadProductPopupMenu();
         loadProductButtonEvent();
@@ -112,32 +112,52 @@ public class DashboardUI extends JFrame {
         loadBasketCustomerCombo();
 
 
-    }
-private void loadBasketCustomerCombo()
-{
-    ArrayList<Customer> customers=this.customerController.findAll();
-    this.cmbBasketCustomer.removeAllItems();
-    for (Customer customer:customers)
+        btnBasketNew.addActionListener(e -> {
+            Item selectedCustomer = (Item) this.cmbBasketCustomer.getSelectedItem();
 
-    {
-    int comboKey=customer.getId();
-    String comboValue =customer.getName();
-    this.cmbBasketCustomer.addItem(new Item(comboKey,comboValue));
+            if (selectedCustomer == null) {
+                Helper.showMsg("Lütfen Müşteri Seçin");
+            } else {
+                Customer customer = this.customerController.getById(selectedCustomer.getKey());
+
+                ArrayList<Basket> baskets = this.basketController.findAll();
+
+                if (customer.getId() == 0) {
+                    Helper.showMsg("Böyle bir müşteri bulunamadı");
+                } else if (baskets.size() == 0) {
+Helper.showMsg("Lütfen sepete Ürün ekleyınız");
+                }
+                else {
+                    CardUI cardUI=new CardUI(customer);
+                }
+
+
+            }
+        });
     }
-    this.cmbBasketCustomer.setSelectedItem(null);
-}
-private  void loadBasketButtonEvent()
-{
-    btnBasketReset.addActionListener(e -> {
-if (this.basketController.clear())
-{
-    Helper.showMsg("done");
-    loadBasketTable();
-}else {
-    Helper.showMsg("error");
-}
-    });
-}
+
+    private void loadBasketCustomerCombo() {
+        ArrayList<Customer> customers = this.customerController.findAll();
+        this.cmbBasketCustomer.removeAllItems();
+        for (Customer customer : customers) {
+            int comboKey = customer.getId();
+            String comboValue = customer.getName();
+            this.cmbBasketCustomer.addItem(new Item(comboKey, comboValue));
+        }
+        this.cmbBasketCustomer.setSelectedItem(null);
+    }
+
+    private void loadBasketButtonEvent() {
+        btnBasketReset.addActionListener(e -> {
+            if (this.basketController.clear()) {
+                Helper.showMsg("done");
+                loadBasketTable();
+            } else {
+                Helper.showMsg("error");
+            }
+        });
+    }
+
     private void loadProductTable(ArrayList<Product> products) {
         Object[] columnProduct = {"ID", "Ürün Adı", "Ürün Kodu", "Ürün Fiyatı", "Ürün Stok"};
         if (products == null) {
@@ -167,9 +187,6 @@ if (this.basketController.clear())
         this.tbl_product.setEnabled(false);
 
     }
-
-
-
 
 
     private void loadProductButtonEvent() {
@@ -226,11 +243,11 @@ if (this.basketController.clear())
             } else {
                 Basket basket = new Basket(basketProduct.getId());
                 boolean result = false;
-                if (this.basketController.save(basket)){
+                if (this.basketController.save(basket)) {
                     Helper.showMsg("done");
                     loadBasketTable();
 
-                }else {
+                } else {
                     Helper.showMsg("error");
                 }
             }
@@ -269,14 +286,14 @@ if (this.basketController.clear())
 
     private void loadBasketTable() {
         Object[] columnBasket = {"ID", "Ürün Adı", "Ürün Kodu", "Ürün Fiyatı", "Ürün Stok"};
-ArrayList<Basket> baskets=this.basketController.findAll();
+        ArrayList<Basket> baskets = this.basketController.findAll();
 
 // tabloyu sıfırlama / tablo cagırıldıgında asagıya dogru tekrar etmemesı ıcın
         DefaultTableModel clearModel = (DefaultTableModel) this.tblBasket.getModel();
         clearModel.setRowCount(0);
 
         this.tmbl_basket.setColumnIdentifiers(columnBasket);
-int totalPrice=0;
+        int totalPrice = 0;
 
         for (Basket basket : baskets) {
             Object[] rowObject =
@@ -288,10 +305,9 @@ int totalPrice=0;
                             basket.getProduct().getStock()
 
 
-
                     };
             this.tmbl_basket.addRow(rowObject);
-            totalPrice+= basket.getProduct().getPrice();
+            totalPrice += basket.getProduct().getPrice();
         }
         this.lblBasketPrice.setText(String.valueOf(totalPrice));
         this.lblBasketCount.setText(String.valueOf(baskets.size()));
