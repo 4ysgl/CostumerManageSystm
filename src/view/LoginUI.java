@@ -52,6 +52,7 @@ public class LoginUI extends JFrame {
                 } else {
                     this.dispose(); // eğer işlemler dogru ılerledıyse DashboardUI Formunu acacak.
                     DashboardUI dashboardUI = new DashboardUI(user);
+                    dashboardUI.setVisible(true);
                 }
             }
 

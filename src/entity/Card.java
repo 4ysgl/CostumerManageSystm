@@ -86,7 +86,7 @@ public class Card {
                 "id=" + id +
                 ", productId=" + productId +
                 ", customerId=" + customerId +
-                ", note='" + note + '\'' +
+                ", note='" + note +
                 ", price=" + price +
                 ", date=" + date +
                 ", product=" + product +

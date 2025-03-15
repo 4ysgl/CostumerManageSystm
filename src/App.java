@@ -16,13 +16,12 @@ public class App
 //Connection connect1= Database.getInstance();// baglantı saglandı
 
         Helper.setTheme();
-      //  LoginUI loginUI=new LoginUI();
-        UserController userController=new UserController();
-        User user= userController.findByLogin("demo1@gmail.com","123");
+ LoginUI loginUI=new LoginUI();
+  /* UserController userController=new UserController();
+   User user= userController.findByLogin("demo1@gmail.com","123");
 
         DashboardUI dashboardUI=new DashboardUI(user);
-
-
+*/
     }
 
 

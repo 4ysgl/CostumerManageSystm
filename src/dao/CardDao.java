@@ -15,6 +15,8 @@ public class CardDao {
 
     public CardDao() {
         this.connection = Database.getInstance();
+        this.productDao=new ProductDao();
+        this.customerDao = new CustomerDao();
     }
 
     public ArrayList<Card> findAll() {
@@ -61,12 +63,12 @@ public class CardDao {
                 "VALUES (?,?,?,?,?)" ;
         try {
             PreparedStatement pr=this.connection.prepareStatement(query);
-            pr.setInt(1,card.getId());
-            pr.setInt(2,card.getCustomerId());
-            pr.setInt(3,card.getProductId());
-            pr.setInt(4,card.getPrice());
-            pr.setDate(6, Date.valueOf(card.getDate()));
-            pr.setString(5,card.getNote());
+
+            pr.setInt(1, card.getCustomerId()); // card.getId() yerine customerId kullanılmalı
+            pr.setInt(2, card.getProductId());
+            pr.setInt(3, card.getPrice());
+            pr.setDate(4, Date.valueOf(card.getDate())); //  Sıra düzeltildi
+            pr.setString(5, card.getNote());
 
             return pr.executeUpdate()!=-1;
         } catch (SQLException e) {
